@@ -9,6 +9,7 @@ def setup_data_dir():
     try:
         os.makedirs(get_save_dir(), exist_ok=True)
         os.makedirs(get_temp_dir(), exist_ok=True)
+        os.makedirs(get_themes_dir(), exist_ok=True)
     except FileExistsError:
         print("Macos ignored exist_ok=true for save or temp dict, continuing.")
         pass
@@ -43,6 +44,8 @@ def get_log_dir():
 def get_save_dir():
     return get_data_dir() + '/saves'
 
+def get_themes_dir():
+    return get_data_dir() + '/themes'
 
 def get_cache_dir():
     return get_data_dir() + '/cache'

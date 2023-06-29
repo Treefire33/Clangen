@@ -17,6 +17,7 @@ from scripts.game_structure.game_essentials import game, screen, screen_x, scree
 from .cat_screens import ProfileScreen
 from ..conditions import get_amount_cat_for_one_medic, medical_cats_condition_fulfilled
 from scripts.game_structure.windows import SaveError
+from scripts.housekeeping.datadir import get_themes_dir
 
 #does this file exist? That os import will tell us with os.path.exists()
 import os
@@ -264,8 +265,8 @@ class ClanScreen(Screens):
         for leaf in leaves:
             if game.settings["themes_enabled"]:
                 config = configparser.ConfigParser()
-                config.read(game.config['theme']['current_theme']+"theme.ini")
-                platform_dir = f"{game.config['theme']['current_theme']}{config['Backgrounds']['Path']}{biome}/{leaf}_{camp_nr}_{light_dark}.png"
+                config.read(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/theme.ini')
+                platform_dir = f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/{config["Backgrounds"]["Path"]}{biome}/{leaf}_{camp_nr}_{light_dark}.png'
                 if not os.path.exists(platform_dir):
                     platform_dir = f'{camp_bg_base_dir}/{biome}/{leaf}_{camp_nr}_{light_dark}.png'
             else:

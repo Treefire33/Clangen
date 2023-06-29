@@ -358,11 +358,9 @@
 		"newborns_can_patrol": false
 	},
 	"theme": {
-		"current_theme": "themes/default/",
+		"current_theme": "default",
 		"comment": [
-			"There are two ways to select a theme:",
-			"Put one in the themes folder and put in this path: themes/*theme_name*/",
-			"Use the full path of where the theme is located. Example: C:/Users/*user*/Documents/*theme_name*/"
+			"Put name of theme here, example: default"
 		]
 	},
 	"lock_season": false, 

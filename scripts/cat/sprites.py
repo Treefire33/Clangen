@@ -3,6 +3,9 @@ import pygame
 import ujson
 
 from scripts.game_structure.game_essentials import game
+from scripts.housekeeping.datadir import get_themes_dir
+
+import configparser
 
 class Sprites():
     cat_tints = {}
@@ -211,7 +214,15 @@ for x in [
     if 'lineart' in x and game.config['fun']['april_fools']:
         sprites.spritesheet(f"sprites/aprilfools{x}.png", x)
     else:
-        sprites.spritesheet(f"sprites/{x}.png", x)
+        if game.settings["themes_enabled"]:
+            config = configparser.ConfigParser()
+            config.read(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/theme.ini')
+            if config["Sprites"]["Replace"] == "True":
+                sprites.spritesheet(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/{config["Sprites"]["Path"]}{x}.png', x)
+            else:
+                sprites.spritesheet(f"sprites/{x}.png", x)
+        else:
+            sprites.spritesheet(f"sprites/{x}.png", x)
 
 # Line art
 sprites.make_group('lineart', (0, 0), 'lines')

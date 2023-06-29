@@ -13,6 +13,7 @@ from scripts.game_structure import image_cache
 from scripts.game_structure.image_button import UIImageButton, UISpriteButton
 from scripts.game_structure.game_essentials import game, MANAGER
 from scripts.patrol import Patrol
+from scripts.housekeeping.datadir import get_themes_dir
 
 #the file functions
 import os
@@ -1202,9 +1203,9 @@ class MakeClanScreen(Screens):
 
         if campnum:
             config = configparser.ConfigParser()
-            config.read(game.config['theme']['current_theme']+"theme.ini")
-            if game.settings["themes_enabled"] and os.path.exists(f"{game.config['theme']['current_theme']}{config['Backgrounds']['Path']}{biome}/{start_leave}_camp{campnum}_{light_dark}.png"):
-                return f"{game.config['theme']['current_theme']}{config['Backgrounds']['Path']}{biome}/{start_leave}_camp{campnum}_{light_dark}.png"
+            config.read(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/theme.ini')
+            if game.settings["themes_enabled"] and os.path.exists(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/{config["Backgrounds"]["Path"]}{biome}/{start_leave}_camp{campnum}_{light_dark}.png'):
+                return f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/{config["Backgrounds"]["Path"]}{biome}/{start_leave}_camp{campnum}_{light_dark}.png'
             else:
                 return f'{camp_bg_base_dir}/{biome}/{start_leave}_camp{campnum}_{light_dark}.png'
         else:

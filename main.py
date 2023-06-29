@@ -22,7 +22,7 @@ import os
 
 from scripts.housekeeping.log_cleanup import prune_logs
 from scripts.housekeeping.stream_duplexer import UnbufferedStreamDuplexer
-from scripts.housekeeping.datadir import get_log_dir, setup_data_dir
+from scripts.housekeeping.datadir import get_log_dir, setup_data_dir, get_themes_dir
 from scripts.housekeeping.version import get_version_info, VERSION_NAME
 
 #Config Parser for ini files
@@ -192,7 +192,7 @@ disabled_cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)
 
 def loadTheme(darkMode):
     config = configparser.ConfigParser()
-    config.read(game.config["theme"]["current_theme"]+"theme.ini")
+    config.read(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/theme.ini')
     fill_light = config["Light_Mode"]["Fill"].split(',')
     fill_dark = config["Dark_Mode"]["Fill"].split(',')
     light_mode_fill = (int(fill_light[0]), int(fill_light[1]), int(fill_light[2]))
@@ -201,7 +201,6 @@ def loadTheme(darkMode):
         return dark_mode_fill
     else:
         return light_mode_fill
-    
 
 while True:
     time_delta = clock.tick(game.switches['fps']) / 1000.0
