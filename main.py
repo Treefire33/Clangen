@@ -25,6 +25,9 @@ from scripts.housekeeping.stream_duplexer import UnbufferedStreamDuplexer
 from scripts.housekeeping.datadir import get_log_dir, setup_data_dir
 from scripts.housekeeping.version import get_version_info, VERSION_NAME
 
+#Config Parser for ini files
+import configparser
+
 
 directory = os.path.dirname(__file__)
 if directory:
@@ -187,17 +190,29 @@ cursor_img = pygame.image.load('resources/images/cursor.png').convert_alpha()
 cursor = pygame.cursors.Cursor((9,0), cursor_img)
 disabled_cursor = pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)
 
-
-
-
+def loadTheme(darkMode):
+    config = configparser.ConfigParser()
+    config.read(game.config["theme"]["current_theme"]+"theme.ini")
+    fill_light = config["Light_Mode"]["Fill"].split(',')
+    fill_dark = config["Dark_Mode"]["Fill"].split(',')
+    light_mode_fill = (int(fill_light[0]), int(fill_light[1]), int(fill_light[2]))
+    dark_mode_fill = (int(fill_dark[0]), int(fill_dark[1]), int(fill_dark[2]))
+    if darkMode:
+        return dark_mode_fill
+    else:
+        return light_mode_fill
+    
 
 while True:
     time_delta = clock.tick(game.switches['fps']) / 1000.0
     if game.switches['cur_screen'] not in ['start screen']:
-        if game.settings['dark mode']:
+        if game.settings['dark mode'] and game.settings["themes_enabled"] == False:
             screen.fill((57, 50, 36))
-        else:
+        elif game.settings["themes_enabled"] == False:
             screen.fill((206, 194, 168))
+        elif game.settings["themes_enabled"] == True:
+            screen.fill(loadTheme(game.settings['dark mode']))
+            
 
     if game.settings['custom cursor']:
         if pygame.mouse.get_cursor() == disabled_cursor:

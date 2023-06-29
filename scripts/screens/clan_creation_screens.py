@@ -14,6 +14,10 @@ from scripts.game_structure.image_button import UIImageButton, UISpriteButton
 from scripts.game_structure.game_essentials import game, MANAGER
 from scripts.patrol import Patrol
 
+#the file functions
+import os
+import configparser
+
 
 class MakeClanScreen(Screens):
     # UI images
@@ -1197,6 +1201,11 @@ class MakeClanScreen(Screens):
         biome = self.biome_selected.lower()
 
         if campnum:
-            return f'{camp_bg_base_dir}/{biome}/{start_leave}_camp{campnum}_{light_dark}.png'
+            config = configparser.ConfigParser()
+            config.read(game.config['theme']['current_theme']+"theme.ini")
+            if game.settings["themes_enabled"] and os.path.exists(f"{game.config['theme']['current_theme']}{config['Backgrounds']['Path']}{biome}/{start_leave}_camp{campnum}_{light_dark}.png"):
+                return f"{game.config['theme']['current_theme']}{config['Backgrounds']['Path']}{biome}/{start_leave}_camp{campnum}_{light_dark}.png"
+            else:
+                return f'{camp_bg_base_dir}/{biome}/{start_leave}_camp{campnum}_{light_dark}.png'
         else:
             return None

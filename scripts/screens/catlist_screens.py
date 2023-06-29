@@ -18,6 +18,11 @@ from .cat_screens import ProfileScreen
 from ..conditions import get_amount_cat_for_one_medic, medical_cats_condition_fulfilled
 from scripts.game_structure.windows import SaveError
 
+#does this file exist? That os import will tell us with os.path.exists()
+import os
+#config
+import configparser
+
 
 class ClanScreen(Screens):
     max_sprites_displayed = 400  # we don't want 100,000 sprites rendering at once. 400 is enough.
@@ -239,7 +244,7 @@ class ClanScreen(Screens):
         light_dark = "light"
         if game.settings["dark mode"]:
             light_dark = "dark"
-
+        
         camp_bg_base_dir = 'resources/images/camp_bg/'
         leaves = ["newleaf", "greenleaf", "leafbare", "leaffall"]
         camp_nr = game.clan.camp_bg
@@ -257,7 +262,14 @@ class ClanScreen(Screens):
 
         all_backgrounds = []
         for leaf in leaves:
-            platform_dir = f'{camp_bg_base_dir}/{biome}/{leaf}_{camp_nr}_{light_dark}.png'
+            if game.settings["themes_enabled"]:
+                config = configparser.ConfigParser()
+                config.read(game.config['theme']['current_theme']+"theme.ini")
+                platform_dir = f"{game.config['theme']['current_theme']}{config['Backgrounds']['Path']}{biome}/{leaf}_{camp_nr}_{light_dark}.png"
+                if not os.path.exists(platform_dir):
+                    platform_dir = f'{camp_bg_base_dir}/{biome}/{leaf}_{camp_nr}_{light_dark}.png'
+            else:
+                platform_dir = f'{camp_bg_base_dir}/{biome}/{leaf}_{camp_nr}_{light_dark}.png'
             all_backgrounds.append(platform_dir)
 
         self.newleaf_bg = pygame.transform.scale(
