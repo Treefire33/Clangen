@@ -26,7 +26,11 @@ Replace = False<br>
 Scroll until you find the "theme" config.<br>
 Change "current_theme" to the name of the theme. Example: "default" or "test"<br>
 <br>
+## Adding themes:
+Go to %localappdata% and find ClanGen.<br>
+In that folder there <b>should</b> be a folder called "themes", make a folder in "themes" that is the name of your theme.<br>
+You can check the "default" theme to see how the theme should be structured.<br>
 
-<b>Now you can experience a themed Clangen!</b>
+<b>Now you can use themes in ClanGen!</b>
 
-<b>More features are coming soon</b>
+<b>More features are coming soon! And also I will be changing this to be clearer.</b>
