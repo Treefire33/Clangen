@@ -21,6 +21,7 @@ status_dict = {
     "starclan screen": "Viewing StarClan",
     "dark forest screen": "Viewing the Dark Forest",
     "med den screen": "In the medicine den",
+    "theme creation screen": "Creating a theme using ClanGen Themes by Treefire33"
     }
 
 class _DiscordRPC(threading.Thread):

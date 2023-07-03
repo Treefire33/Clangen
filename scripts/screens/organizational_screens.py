@@ -69,6 +69,7 @@ class StartScreen(Screens):
                 self.switch_clan_button: 'switch clan screen',
                 self.new_clan_button: 'make clan screen',
                 self.settings_button: 'settings screen',
+                self.theme_creator_button: 'theme creation screen'
             }
             if event.ui_element in screens:
                 self.change_screen(screens[event.ui_element])
@@ -138,6 +139,7 @@ class StartScreen(Screens):
         self.update_button.kill()
         self.quit.kill()
         self.closebtn.kill()
+        self.theme_creator_button.kill()
         for btn in self.social_buttons:
             self.social_buttons[btn].kill()
 
@@ -169,6 +171,13 @@ class StartScreen(Screens):
             "",
             object_id="#settings_button",
             manager=MANAGER)
+        self.theme_creator_button = UIImageButton(
+            scale(pygame.Rect((0, 0), (356, 60))),
+            "Theme Creator",
+            object_id="#theme_creator_button",
+            manager=MANAGER,
+            starting_height=150000,  # Layer 150k so it's above everything
+            tool_tip_text="Opens the theme creator. ")
         self.quit = UIImageButton(scale(pygame.Rect((140, 980), (384, 70))),
                                   "",
                                   object_id="#quit_button",

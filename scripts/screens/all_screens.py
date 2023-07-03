@@ -10,6 +10,7 @@ from .relation_screens import\
     RelationshipScreen, ChooseMateScreen, FamilyTreeScreen, ChooseMentorScreen, MediationScreen, ChooseAdoptiveParentScreen
 #from scripts.screens.relation.choose_adoptive_parent import ChooseAdoptiveParentScreen
 from .world_screens import OutsideClanScreen, UnknownResScreen
+from .theme_screens import ThemeCreationScreen
 
 # ---------------------------------------------------------------------------- #
 #                                  UI RULES                                    #
@@ -97,3 +98,9 @@ mediation_screen = MediationScreen("mediation screen")
 
 outside_clan_screen = OutsideClanScreen('other screen')
 unknown_residence_screen = UnknownResScreen('unknown residence screen')
+
+# ---------------------------------------------------------------------------- #
+#                               theme_screens.py                               #
+# ---------------------------------------------------------------------------- #
+
+theme_creation_screen = ThemeCreationScreen('theme creation screen')
