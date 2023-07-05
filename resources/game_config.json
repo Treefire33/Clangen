@@ -358,7 +358,7 @@
 		"newborns_can_patrol": false
 	},
 	"theme": {
-		"current_theme": "default",
+        "current_theme": "default",
 		"comment": [
 			"Put name of theme here, example: default"
 		]

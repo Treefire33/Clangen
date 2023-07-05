@@ -1,3 +1,31 @@
+# clangen theme maker/manager (W.I.P)
+
+Make themes for clangen and use them!
+
+Use the theme creator to create a theme or read the theme guide to make one manually.
+
+Then modify the game config to select a theme.
+
+DISCLAIMER(s):
+
+Read everything carefully.
+
+If you need help making a theme, look the default theme located in the themes folder for an example.
+
+Everything that is replaced must share a name with the thing it is replacing, so don't change anything.
+
+Anything that adds on to the sprites may not work.
+
+Not everything needs to be replaced.
+
+Anything relating to the themes is case sensitive.
+
+(Hopefully that wasn't too much.)
+
+original README below. |
+
+<hr>
+
 # clangen
 
 ### [Discord Server](https://discord.gg/rnFQqyPZ7K) || [Itch.io Page](https://sablesteel.itch.io/clan-gen-fan-edit)

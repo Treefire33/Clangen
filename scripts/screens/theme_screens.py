@@ -1,7 +1,9 @@
 #Imports
 import pygame
 import pygame_gui
-import os, configparser #not ujson because .ini files are better for config
+import os
+import configparser
+import shutil
 from requests.exceptions import RequestException, Timeout
 
 from scripts.game_structure.discord_rpc import _DiscordRPC
@@ -19,6 +21,10 @@ class ThemeCreationScreen(Screens):
     theme_name = ""
     lightmode_color = ""
     darkmode_color = ""
+    background_path = ""
+    sprites_path = ""
+    bkgr_not_provided = False
+    spr_not_provived = False
 
     def __init__(self, name=None):
         super().__init__(name)
@@ -30,9 +36,21 @@ class ThemeCreationScreen(Screens):
                 new_name = sub(r'[^A-Za-z0-9_,]+', "", self.theme_name_field.get_text()).strip()
                 new_lightcolor = sub(r'[^A-Za-z0-9_,]+', "", self.lightmode_color_field.get_text()).strip()
                 new_darkcolor = sub(r'[^A-Za-z0-9_,]+', "", self.darkmode_color_field.get_text()).strip()
+                if not self.background_path_field.get_text() == None:
+                    temp_backgroundpath = sub(r'[^A-Za-z0-9_,\\:]+', "", self.background_path_field.get_text()).strip()
+                    new_backgroundpath = temp_backgroundpath.replace("\\", "/")
+                else:
+                    self.bkgr_not_provided = True
+                if not self.sprite_path_field.get_text() == None:
+                    temp_spritespath = sub(r'[^A-Za-z0-9_,\\:]+', "", self.sprite_path_field.get_text()).strip()
+                    new_spritespath = temp_spritespath.replace("\\", "/")
+                else:
+                    self.spr_not_provived = True
                 self.theme_name = new_name
                 self.lightmode_color = new_lightcolor
                 self.darkmode_color = new_darkcolor
+                self.background_path = new_backgroundpath
+                self.sprites_path = new_spritespath
                 if self.create_theme_file() == 0:
                     self.change_screen('start screen')
                     print('successful')
@@ -43,6 +61,11 @@ class ThemeCreationScreen(Screens):
                     self.darkmode_color_label.kill()
                     self.lightmode_color_field.kill()
                     self.lightmode_color_label.kill()
+                    self.background_path_label.kill()
+                    self.background_path_field.kill()
+                    self.sprite_path_field.kill()
+                    self.sprite_path_label.kill()
+                    self.notice_label.kill()
                     self.submit_button.kill()
                 else:
                     print('error, whoops')
@@ -90,6 +113,35 @@ class ThemeCreationScreen(Screens):
             scale(pygame.Rect((100, 697), ((screen_x*2)-200, 58))), 
             manager=MANAGER
         )
+        self.background_path_label = pygame_gui.elements.UITextBox(
+            'Background Images (Only camp backgrounds so far, optional):',
+            scale(pygame.Rect((100, 743), (screen_x*2, 58))),
+            object_id="#text_box_34_horizleft_dark",
+            manager=MANAGER,
+            starting_height=1
+        )
+        self.background_path_field = pygame_gui.elements.UITextEntryLine(
+            scale(pygame.Rect((100, 801), ((screen_x*2)-200, 58))), 
+            manager=MANAGER
+        )
+        self.sprite_path_label = pygame_gui.elements.UITextBox(
+            'Sprites (Sprites folder should be structured like the main sprites folder, optional):',
+            scale(pygame.Rect((100, 847), (screen_x*2, 58))),
+            object_id="#text_box_34_horizleft_dark",
+            manager=MANAGER,
+            starting_height=1
+        )
+        self.sprite_path_field = pygame_gui.elements.UITextEntryLine(
+            scale(pygame.Rect((100, 905), ((screen_x*2)-200, 58))), 
+            manager=MANAGER
+        )
+        self.notice_label = pygame_gui.elements.UITextBox(
+            'Important: Sprites and background folders are copied to the theme folder.<br>Please use paths starting with C:\.',
+            scale(pygame.Rect((100, 951), (screen_x*2, 150))),
+            object_id="#text_box_34_horizleft_dark",
+            manager=MANAGER,
+            starting_height=1
+        )
         #Submission of theme
         self.submit_button = UIImageButton(
             scale(pygame.Rect((screen_x-(400/2), screen_y+400), (400, 80))),
@@ -126,18 +178,24 @@ class ThemeCreationScreen(Screens):
         try:
             if not os.path.exists(get_themes_dir()+"/"+self.theme_name):
                 os.makedirs(get_themes_dir()+"/"+self.theme_name)
-                os.makedirs(get_themes_dir()+"/"+self.theme_name+"/images")
-                os.makedirs(get_themes_dir()+"/"+self.theme_name+"/images/camp_bg")
-                os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites")
-                os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites/dicts")
-                os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites/faded")
-                os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites/paralyzed")
+                if self.bkgr_not_provided == True:
+                    os.makedirs(get_themes_dir()+"/"+self.theme_name+"/images")
+                    os.makedirs(get_themes_dir()+"/"+self.theme_name+"/images/camp_bg")
+                if self.spr_not_provived == True:
+                    os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites")
+                    os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites/dicts")
+                    os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites/faded")
+                    os.makedirs(get_themes_dir()+"/"+self.theme_name+"/sprites/paralyzed")
+                shutil.copytree(self.background_path, get_themes_dir()+"/"+self.theme_name+"/images", copy_function = shutil.copy)
+                shutil.copytree(self.sprites_path, get_themes_dir()+"/"+self.theme_name+"/sprites", copy_function = shutil.copy)
                 config["Light_Mode"] = {"Fill": self.lightmode_color}
                 config["Dark_Mode"] = {"Fill": self.darkmode_color}
                 config["Background"] = {"Path": 'images/camp_bg/'}
                 config["Sprites"] = {"Path": 'sprites/', 'Replace': 'False'}
                 config.write(open(get_themes_dir()+"/"+self.theme_name+"/"+'theme.ini', 'w'))
             else:
+                shutil.copytree(self.background_path, get_themes_dir()+"/"+self.theme_name+"/images", copy_function = shutil.copy)
+                shutil.copytree(self.sprites_path, get_themes_dir()+"/"+self.theme_name+"/sprites", copy_function = shutil.copy)
                 config["Light_Mode"] = {"Fill": self.lightmode_color}
                 config["Dark_Mode"] = {"Fill": self.darkmode_color}
                 config["Background"] = {"Path": 'images/camp_bg/'}

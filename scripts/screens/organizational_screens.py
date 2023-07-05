@@ -32,7 +32,7 @@ from scripts.game_structure.image_button import UIImageButton
 from scripts.game_structure.windows import DeleteCheck, UpdateAvailablePopup, ChangelogPopup, SaveError
 from scripts.utility import get_text_box_theme, scale, quit  # pylint: disable=redefined-builtin
 from .base_screens import Screens
-from ..housekeeping.datadir import get_data_dir, get_cache_dir
+from ..housekeeping.datadir import get_data_dir, get_cache_dir, get_themes_dir
 from ..housekeeping.update import has_update, UpdateChannel, get_latest_version_number
 from ..housekeeping.version import get_version_info
 
@@ -49,13 +49,49 @@ class StartScreen(Screens):
     def __init__(self, name=None):
         super().__init__(name)
         self.warning_label = None
-        self.bg = pygame.image.load("resources/images/menu.png").convert()
+        if not game.settings["themes_enabled"]:
+            self.bg = pygame.image.load("resources/images/menu.png").convert()
+        else:
+            if os.path.exists(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/images/menu.png'):
+                self.bg = pygame.image.load(f'{get_themes_dir()}/{game.config["theme"]["current_theme"]}/images/menu.png').convert() 
+            else:
+                self.bg = pygame.image.load("resources/images/menu.png").convert()
         self.bg = pygame.transform.scale(self.bg, (screen_x, screen_y))
         self.social_buttons = {}
+
+    def replace_line(self, file_name, line_num, text): #some goofy function I found
+        # with is like your try .. finally block in this case
+        with open(file_name, 'r') as file:
+            # read a list of lines into data
+            data = file.readlines()
+
+        # now change the 2nd line, note that you have to add a newline
+        data[line_num-1] = text+'\n'
+
+        # and write everything back
+        with open(file_name, 'w') as file:
+            file.writelines( data )
+
+    run_once_bool = False #Runs the curtheme field setup only once
 
     def handle_event(self, event):
         """This is where events that occur on this page are handled.
         For the pygame_gui rewrite, button presses are also handled here. """
+        if not self.run_once_bool:
+            if game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
+                self.curtheme_field.set_text(game.config["theme"]["current_theme"])
+                self.run_once_bool = True
+            elif game.settings["themes_enabled"] and game.config["theme"]["current_theme"] == None:
+                self.curtheme_field.set_text("default")
+                self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_field.get_text()+'",')
+                self.run_once_bool = True
+            else:
+                self.curtheme_field.kill()
+                self.curtheme_label.kill()
+                self.curtheme_label_2.kill()
+                self.run_once_bool = True
+        if self.run_once_bool and game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
+            self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_field.get_text()+'",')
         if event.type == pygame_gui.UI_TEXT_BOX_LINK_CLICKED:
             if platform.system() == 'Darwin':
                 subprocess.Popen(["open", "-u", event.link_target])
@@ -140,6 +176,9 @@ class StartScreen(Screens):
         self.quit.kill()
         self.closebtn.kill()
         self.theme_creator_button.kill()
+        self.curtheme_label.kill()
+        self.curtheme_field.kill()
+        self.curtheme_label_2.kill()
         for btn in self.social_buttons:
             self.social_buttons[btn].kill()
 
@@ -178,6 +217,24 @@ class StartScreen(Screens):
             manager=MANAGER,
             starting_height=150000,  # Layer 150k so it's above everything
             tool_tip_text="Opens the theme creator. ")
+        self.curtheme_label = pygame_gui.elements.UITextBox(
+            "Current Theme (Do not set to theme that doesn't exist):",
+            scale(pygame.Rect((0, 65), (1000, 60))),
+            object_id="#text_box_34_horizleft_dark",
+            manager=MANAGER,
+            starting_height=150000
+        )
+        self.curtheme_field = pygame_gui.elements.UITextEntryLine(
+            scale(pygame.Rect((0, 125), (1000, 60))), 
+            manager=MANAGER
+        )
+        self.curtheme_label_2 = pygame_gui.elements.UITextBox(
+            "(Reload required after switching)",
+            scale(pygame.Rect((0, 185), (1000, 60))),
+            object_id="#text_box_34_horizleft_dark",
+            manager=MANAGER,
+            starting_height=150000
+        )
         self.quit = UIImageButton(scale(pygame.Rect((140, 980), (384, 70))),
                                   "",
                                   object_id="#quit_button",
