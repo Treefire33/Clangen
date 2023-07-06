@@ -35,6 +35,7 @@ from .base_screens import Screens
 from ..housekeeping.datadir import get_data_dir, get_cache_dir, get_themes_dir
 from ..housekeeping.update import has_update, UpdateChannel, get_latest_version_number
 from ..housekeeping.version import get_version_info
+from .theme_screens import ThemeRelatedFunctions
 
 logger = logging.getLogger(__name__)
 has_checked_for_update = False
@@ -79,19 +80,19 @@ class StartScreen(Screens):
         For the pygame_gui rewrite, button presses are also handled here. """
         if not self.run_once_bool:
             if game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
-                self.curtheme_field.set_text(game.config["theme"]["current_theme"])
+                self.curtheme_selector.selected_option = game.config["theme"]["current_theme"]
                 self.run_once_bool = True
             elif game.settings["themes_enabled"] and game.config["theme"]["current_theme"] == None:
-                self.curtheme_field.set_text("default")
-                self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_field.get_text()+'",')
+                self.curtheme_selector.selected_option = "default"
+                self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_selector.selected_option+'",')
                 self.run_once_bool = True
             else:
-                self.curtheme_field.kill()
+                self.curtheme_selector.kill()
                 self.curtheme_label.kill()
-                self.curtheme_label_2.kill()
                 self.run_once_bool = True
-        if self.run_once_bool and game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
-            self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_field.get_text()+'",')
+        if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+            if self.run_once_bool and game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
+                self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_selector.selected_option+'",')
         if event.type == pygame_gui.UI_TEXT_BOX_LINK_CLICKED:
             if platform.system() == 'Darwin':
                 subprocess.Popen(["open", "-u", event.link_target])
@@ -177,8 +178,7 @@ class StartScreen(Screens):
         self.closebtn.kill()
         self.theme_creator_button.kill()
         self.curtheme_label.kill()
-        self.curtheme_field.kill()
-        self.curtheme_label_2.kill()
+        self.curtheme_selector.kill()
         for btn in self.social_buttons:
             self.social_buttons[btn].kill()
 
@@ -218,23 +218,20 @@ class StartScreen(Screens):
             starting_height=150000,  # Layer 150k so it's above everything
             tool_tip_text="Opens the theme creator. ")
         self.curtheme_label = pygame_gui.elements.UITextBox(
-            "Current Theme (Do not set to theme that doesn't exist):",
+            "Current Theme (Reload required after selection):",
             scale(pygame.Rect((0, 65), (1000, 60))),
             object_id="#text_box_34_horizleft_dark",
             manager=MANAGER,
             starting_height=150000
         )
-        self.curtheme_field = pygame_gui.elements.UITextEntryLine(
-            scale(pygame.Rect((0, 125), (1000, 60))), 
+        self.curtheme_selector = pygame_gui.elements.UIDropDownMenu(
+            options_list=ThemeRelatedFunctions.load_owned_themes(),
+            starting_option="default",
+            relative_rect=scale(pygame.Rect((0, 125), (1000, 60))), 
             manager=MANAGER
         )
-        self.curtheme_label_2 = pygame_gui.elements.UITextBox(
-            "(Reload required after switching)",
-            scale(pygame.Rect((0, 185), (1000, 60))),
-            object_id="#text_box_34_horizleft_dark",
-            manager=MANAGER,
-            starting_height=150000
-        )
+        if game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
+                self.curtheme_selector.selected_option = game.config["theme"]["current_theme"]
         self.quit = UIImageButton(scale(pygame.Rect((140, 980), (384, 70))),
                                   "",
                                   object_id="#quit_button",

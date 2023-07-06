@@ -27,6 +27,7 @@ class ThemeCreationScreen(Screens):
     spr_not_provived = False
 
     def __init__(self, name=None):
+        ThemeRelatedFunctions.load_owned_themes()
         super().__init__(name)
         screen.fill((150,189,212))
         
@@ -206,4 +207,12 @@ class ThemeCreationScreen(Screens):
             print(error)
             return 1
 
-    
+class ThemeRelatedFunctions():
+    def load_owned_themes():
+        for root, dirs, files in os.walk(get_themes_dir()):
+            print(dirs)
+            return dirs
+    def copy_default_themes():
+        if not os.path.exists(get_themes_dir()+"/default"):
+            shutil.copytree("./themes/default", get_themes_dir())
+            shutil.copytree("./themes/cooler_colors", get_themes_dir())
