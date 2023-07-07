@@ -73,23 +73,9 @@ class StartScreen(Screens):
         with open(file_name, 'w') as file:
             file.writelines( data )
 
-    run_once_bool = False #Runs the curtheme field setup only once
-
     def handle_event(self, event):
         """This is where events that occur on this page are handled.
         For the pygame_gui rewrite, button presses are also handled here. """
-        if not self.run_once_bool:
-            if game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
-                self.curtheme_selector.selected_option = game.config["theme"]["current_theme"]
-                self.run_once_bool = True
-            elif game.settings["themes_enabled"] and game.config["theme"]["current_theme"] == None:
-                self.curtheme_selector.selected_option = "default"
-                self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_selector.selected_option+'",')
-                self.run_once_bool = True
-            else:
-                self.curtheme_selector.kill()
-                self.curtheme_label.kill()
-                self.run_once_bool = True
         if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
             if self.run_once_bool and game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
                 self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_selector.selected_option+'",')
@@ -232,6 +218,12 @@ class StartScreen(Screens):
         )
         if game.settings["themes_enabled"] and not game.config["theme"]["current_theme"] == None:
                 self.curtheme_selector.selected_option = game.config["theme"]["current_theme"]
+        elif game.settings["themes_enabled"] and game.config["theme"]["current_theme"] == None:
+            self.curtheme_selector.selected_option = "default"
+            self.replace_line("./resources/game_config.json", 361, '        "current_theme": "'+self.curtheme_selector.selected_option+'",')
+        else:
+            self.curtheme_selector.kill()
+            self.curtheme_label.kill()
         self.quit = UIImageButton(scale(pygame.Rect((140, 980), (384, 70))),
                                   "",
                                   object_id="#quit_button",

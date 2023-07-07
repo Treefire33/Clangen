@@ -163,15 +163,11 @@
             "text_horiz_alignment": "center"
         }
     },
-    "#text_box_100_dark": {
+    "#text_box_65_horizcenter_dark": {
         "prototype": "#default_dark",
-        "font": {
-            "name": "notosans",
-            "size": 100
-        }
-    },
-    "#text_box_100_horizcenter_dark": {
-        "prototype": "#text_box_40_dark",
+        "font":{
+            "size": 65
+        },
         "misc": {
             "text_horiz_alignment": "center"
         }

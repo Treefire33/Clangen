@@ -27,7 +27,7 @@ class ThemeCreationScreen(Screens):
     spr_not_provived = False
 
     def __init__(self, name=None):
-        ThemeRelatedFunctions.load_owned_themes()
+        ThemeRelatedFunctions.copy_default_themes()
         super().__init__(name)
         screen.fill((150,189,212))
         
@@ -68,17 +68,41 @@ class ThemeCreationScreen(Screens):
                     self.sprite_path_label.kill()
                     self.notice_label.kill()
                     self.submit_button.kill()
+                    self.back_button.kill()
                 else:
                     print('error, whoops')
+
+            if event.ui_element == self.back_button:
+                self.theme_name_field.kill()
+                self.title.kill()
+                self.theme_name_label.kill()
+                self.darkmode_color_field.kill()
+                self.darkmode_color_label.kill()
+                self.lightmode_color_field.kill()
+                self.lightmode_color_label.kill()
+                self.background_path_label.kill()
+                self.background_path_field.kill()
+                self.sprite_path_field.kill()
+                self.sprite_path_label.kill()
+                self.notice_label.kill()
+                self.submit_button.kill()
+                self.back_button.kill()
+                self.change_screen('start screen')
     
     def screen_switches(self):
         #Other
         self.title = pygame_gui.elements.UITextBox(
             "Theme Creator",
-            scale(pygame.Rect((screen_x-(screen_x/2), 0), (screen_x, 80))),
-            object_id="#text_box_100_horizcenter_dark",
+            scale(pygame.Rect((screen_x-(1200/2), 0), (1200, 200))),
+            object_id="#text_box_65_horizcenter_dark",
             manager=MANAGER,
             starting_height=1
+        )
+        self.back_button = UIImageButton(
+            scale(pygame.Rect((0, 0), (210, 60))), 
+            "", 
+            object_id="#back_button", 
+            manager=MANAGER
         )
         #Creation
         self.theme_name_label = pygame_gui.elements.UITextBox(
@@ -126,7 +150,7 @@ class ThemeCreationScreen(Screens):
             manager=MANAGER
         )
         self.sprite_path_label = pygame_gui.elements.UITextBox(
-            'Sprites (Sprites folder should be structured like the main sprites folder, optional):',
+            'Sprites (Sprites folder should be the same as the one used for the game, optional):',
             scale(pygame.Rect((100, 847), (screen_x*2, 58))),
             object_id="#text_box_34_horizleft_dark",
             manager=MANAGER,
@@ -191,7 +215,7 @@ class ThemeCreationScreen(Screens):
                 shutil.copytree(self.sprites_path, get_themes_dir()+"/"+self.theme_name+"/sprites", copy_function = shutil.copy)
                 config["Light_Mode"] = {"Fill": self.lightmode_color}
                 config["Dark_Mode"] = {"Fill": self.darkmode_color}
-                config["Background"] = {"Path": 'images/camp_bg/'}
+                config["Backgrounds"] = {"Path": 'images/camp_bg/'}
                 config["Sprites"] = {"Path": 'sprites/', 'Replace': 'False'}
                 config.write(open(get_themes_dir()+"/"+self.theme_name+"/"+'theme.ini', 'w'))
             else:
@@ -199,7 +223,7 @@ class ThemeCreationScreen(Screens):
                 shutil.copytree(self.sprites_path, get_themes_dir()+"/"+self.theme_name+"/sprites", copy_function = shutil.copy)
                 config["Light_Mode"] = {"Fill": self.lightmode_color}
                 config["Dark_Mode"] = {"Fill": self.darkmode_color}
-                config["Background"] = {"Path": 'images/camp_bg/'}
+                config["Backgrounds"] = {"Path": 'images/camp_bg/'}
                 config["Sprites"] = {"Path": 'sprites/', 'Replace': 'False'}
                 config.write(open(get_themes_dir()+"/"+self.theme_name+"/"+'theme.ini', 'w'))
             return 0
@@ -210,9 +234,9 @@ class ThemeCreationScreen(Screens):
 class ThemeRelatedFunctions():
     def load_owned_themes():
         for root, dirs, files in os.walk(get_themes_dir()):
-            print(dirs)
             return dirs
     def copy_default_themes():
         if not os.path.exists(get_themes_dir()+"/default"):
-            shutil.copytree("./themes/default", get_themes_dir())
-            shutil.copytree("./themes/cooler_colors", get_themes_dir())
+            shutil.copytree("./themes/default", get_themes_dir()+"/default")
+        if not os.path.exists(get_themes_dir()+"/cooler_colors"):
+            shutil.copytree("./themes/cooler_colors", get_themes_dir()+"/cooler_colors")
