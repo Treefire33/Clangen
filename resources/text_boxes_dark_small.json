@@ -163,5 +163,14 @@
         "misc": {
             "text_horiz_alignment": "center"
         }
+    },
+    "#text_box_65_horizcenter_dark": {
+        "prototype": "#default_dark",
+        "font":{
+            "size": 65
+        },
+        "misc": {
+            "text_horiz_alignment": "center"
+        }
     }
 }

@@ -4,7 +4,7 @@ Make themes for clangen and use them!
 
 Use the theme creator to create a theme or read the theme guide to make one manually.
 
-Then modify the game config to select a theme.
+Then select your theme in game.
 
 DISCLAIMER(s):
 
@@ -14,9 +14,7 @@ If you need help making a theme, look the default theme located in the themes fo
 
 Everything that is replaced must share a name with the thing it is replacing, so don't change anything.
 
-Anything that adds on to the sprites may not work.
-
-Not everything needs to be replaced.
+Anything that adds more files and more things onto the sprites may not work.
 
 Anything relating to the themes is case sensitive.
 
