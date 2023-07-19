@@ -36,6 +36,7 @@ class PatrolScreen(Screens):
     selected_cat = None  # Holds selected cat.
     selected_apprentice_index = 0
     selected_mate_index = 0
+    lowest_ypos = 922 #Used to move results if patrol has third option
 
     def __init__(self, name=None):
         super().__init__(name)
@@ -218,6 +219,8 @@ class PatrolScreen(Screens):
             self.open_patrol_complete_screen("notproceed")
         elif event.ui_element == self.elements["antagonize"]:
             self.open_patrol_complete_screen("antagonize")
+        elif "option3" in self.elements and event.ui_element == self.elements["option3"]:
+            self.open_patrol_complete_screen("option3")
 
     def handle_patrol_complete_events(self, event):
         if event.ui_element == self.elements['patrol_again']:
@@ -560,17 +563,33 @@ class PatrolScreen(Screens):
                 break
 
         ##################### Buttons:
-        self.elements["proceed"] = UIImageButton(scale(pygame.Rect((1100, 866), (344, 60))), "",
-                                                 object_id="#proceed_button",
+        if not "special" in self.patrol_obj.patrol_event.tags:
+            self.elements["proceed"] = UIImageButton(scale(pygame.Rect((1100, 866), (344, 60))), "",
+                                                    object_id="#proceed_button",
+                                                    starting_height=2, manager=MANAGER)
+            self.elements["not_proceed"] = UIImageButton(scale(pygame.Rect((1100, 922), (344, 60))), "",
+                                                        object_id="#not_proceed_button",
+                                                        starting_height=2, manager=MANAGER)
+        else:
+            self.elements["proceed"] = pygame_gui.elements.UIButton(scale(pygame.Rect((1100, 866), (344, 60))), self.patrol_obj.patrol_event.choices[0],
+                                                 object_id="",
                                                  starting_height=2, manager=MANAGER)
-        self.elements["not_proceed"] = UIImageButton(scale(pygame.Rect((1100, 922), (344, 60))), "",
-                                                     object_id="#not_proceed_button",
+            self.elements["not_proceed"] = pygame_gui.elements.UIButton(scale(pygame.Rect((1100, 922), (344, 60))), self.patrol_obj.patrol_event.choices[1],
+                                                     object_id="",
                                                      starting_height=2, manager=MANAGER)
+            if len(self.patrol_obj.patrol_event.choices) == 3:
+                self.lowest_ypos = 978
+                self.elements["option3"] = pygame_gui.elements.UIButton(scale(pygame.Rect((1100, 978), (344, 60))), self.patrol_obj.patrol_event.choices[2],
+                                                     object_id="",
+                                                     starting_height=2, manager=MANAGER)
+            elif len(self.patrol_obj.patrol_event.choices) > 3:
+                print("More than 3 options is currently supported!")
 
         self.elements["antagonize"] = UIImageButton(scale(pygame.Rect((1100, 980), (344, 72))), "",
                                                     object_id="#antagonize_button", manager=MANAGER)
         if self.patrol_obj.patrol_event.antagonize_text is None:
             self.elements["antagonize"].hide()
+            
 
     def open_patrol_complete_screen(self, user_input):
         """Deals with the next stage of the patrol, including antagonize, proceed, and do not proceed.
@@ -589,14 +608,16 @@ class PatrolScreen(Screens):
             display_text = self.patrol_obj.proceed_patrol("decline")
         elif user_input in ["antag", "antagonize"]:
             display_text = self.patrol_obj.proceed_patrol("antag")
-        else:
+        elif user_input in ["pro", "proceed"]:
             display_text = self.patrol_obj.proceed_patrol("proceed")
+        elif user_input in ["option3"]:
+            display_text = self.patrol_obj.proceed_patrol("option3")
         
         # Adjust text for solo patrols
         display_text = adjust_patrol_text(display_text, self.patrol_obj)
 
         self.elements["patrol_results"] = pygame_gui.elements.UITextBox("",
-                                                                        scale(pygame.Rect((1100, 1000), (344, 300))),
+                                                                        scale(pygame.Rect((1100, self.lowest_ypos+78), (344, 300))),
                                                                         object_id=get_text_box_theme(
                                                                             "#text_box_22_horizcenter_spacing_95"),
                                                                         manager=MANAGER)
@@ -607,6 +628,8 @@ class PatrolScreen(Screens):
         self.elements["proceed"].disable()
         self.elements["not_proceed"].disable()
         self.elements["antagonize"].hide()
+        if "option3" in self.elements:
+            self.elements["option3"].disable()
 
     def update_cat_images_buttons(self):
         """Updates all the cat sprite buttons. Also updates the skills tab, if open, and the next and

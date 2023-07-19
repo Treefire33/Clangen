@@ -1,0 +1,68 @@
+[
+    {
+        "patrol_id": "gen_bord_duststorm1",
+        "biome": "Any",
+        "season": "Any",
+        "tags": [
+            "border",
+            "apprentice",
+            "warrior",
+            "injury",
+            "nc_heat_injury",
+            "death",
+            "special"
+        ],
+        "intro_text": "As p_l walks along the territory, taking each paw step along, ears pricked, and eyes alert; searching for any sign of the rotting creature that threatens their very existence. As p_l fur begins to wisp in the wind, they turn to the horizon, their heart dropping like a stone. A dust storm was on the way!",
+        "decline_text": "p_l looks for an escape, but it is futile, so they have to rush to hide.",
+        "chances_of_success": [55, 20],
+        "choices": ["take shelter", "run away"],
+        "exp": 50,
+        "success_text": {
+            "unscathed_common": "p_l survives the dust storm. Thankfully with no injuries."
+        },
+        "fail_text": {
+            "death": "r_c dies to the storm.",
+            "injury": "r_c receives an injury to the storm."
+        },
+        "history_text": {
+            "injury": "This cat recieved an injury from a dust storm",
+            "reg_death": "Died to a dust storm",
+            "lead_death": "died to a dust storm"
+        },
+        "min_cats": 1,
+        "max_cats": 1
+    },
+    {
+        "patrol_id": "gen_bord_test3choices1",
+        "biome": "Any",
+        "season": "Any",
+        "tags": [
+            "border",
+            "apprentice",
+            "warrior",
+            "injury",
+            "nc_heat_injury",
+            "death",
+            "special"
+        ],
+        "intro_text": "test_intro",
+        "decline_text": "test_decline",
+        "chances_of_success": [100, 50, 0],
+        "choices": ["test1: 100%", "test2: 50%", "test3: 0%"],
+        "exp": 2,
+        "success_text": {
+            "unscathed_common": "test_unscathed"
+        },
+        "fail_text": {
+            "death": "test_died",
+            "injury": "test_injured"
+        },
+        "history_text": {
+            "injury": "injury_fromtest",
+            "reg_death": "died_fromtest",
+            "lead_death": "died_fromtest"
+        },
+        "min_cats": 1,
+        "max_cats": 1
+    }
+]

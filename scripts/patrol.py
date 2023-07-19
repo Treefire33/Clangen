@@ -112,12 +112,19 @@ class Patrol():
         """Proceed the patrol to the next step. 
             path can be: "proceed", "antag", or "decline" """
         
-        if path == "decline":
+        if path == "decline" and self.patrol_event.choices is None:
             if self.patrol_event:
                 return self.patrol_event.decline_text
             else:
                 return "Error - no event chosen"
+        elif path == "decline":
+            self.calculate_success(antagonize=(path == "antag"), choice=1)
+            return self.outcome_text
         
+        if path == "option3":
+            self.calculate_success(antagonize=(path == "antag"), choice=2)
+            return self.outcome_text
+
         self.patrol_done = True
         self.calculate_success(antagonize=(path == "antag"))
         
@@ -282,6 +289,7 @@ class Patrol():
         possible_patrols.extend(self.generate_patrol_events(self.BORDER_GEN))
         possible_patrols.extend(self.generate_patrol_events(self.TRAINING_GEN))
         possible_patrols.extend(self.generate_patrol_events(self.MEDCAT_GEN))
+        possible_patrols.extend(self.generate_patrol_events(self.SPECIAL))
 
         if game_setting_disaster:
             dis_chance = int(random.getrandbits(3))  # disaster patrol chance
@@ -624,19 +632,25 @@ class Patrol():
 
         # makes sure that it grabs patrols in the correct biomes, season, with the correct number of cats
         for patrol in possible_patrols:
-            if not self.check_constraints(patrol):
-                continue
-            if patrol.patrol_id in self.used_patrols:
-                continue
+            if not "special" in patrol.tags:
+                if not self.check_constraints(patrol):
+                    continue
+                if patrol.patrol_id in self.used_patrols:
+                    continue
 
-            if patrol_size < patrol.min_cats:
-                continue
-            if patrol_size > patrol.max_cats:
-                continue
-            if patrol.biome not in [biome, "Any"]:
-                continue
-            if patrol.season not in [current_season, "Any"]:
-                continue
+                if patrol_size < patrol.min_cats:
+                    continue
+                if patrol_size > patrol.max_cats:
+                    continue
+                if patrol.biome not in [biome, "Any"]:
+                    continue
+                if patrol.season not in [current_season, "Any"]:
+                    continue
+            else:
+                if "romantic" in patrol.tags:
+                    romantic_patrols.append(patrol)
+                else:
+                    filtered_patrols.append(patrol)
 
             #  correct button check
             if patrol_type == "general":
@@ -914,7 +928,7 @@ class Patrol():
         return filtered_patrols
 
     def generate_patrol_events(self, patrol_dict):
-        all_patrol_events = []
+        all_patrol_events = []   
         for patrol in patrol_dict:
             patrol_event = PatrolEvent(
                 patrol_id=patrol["patrol_id"],
@@ -925,7 +939,9 @@ class Patrol():
                 success_text=patrol["success_text"],
                 fail_text=patrol["fail_text"],
                 decline_text=patrol["decline_text"],
-                chance_of_success=patrol["chance_of_success"],
+                chance_of_success=patrol["chance_of_success"] if "chances_of_success" not in patrol else None,
+                chances_of_success=patrol["chances_of_success"] if "chances_of_success" in patrol else None,
+                choices=patrol["choices"] if "choices" in patrol else None,
                 exp=patrol["exp"],
                 min_cats=patrol["min_cats"] if "min_cats" in patrol else 1,
                 max_cats=patrol["max_cats"] if "max_cats" in patrol else 6,
@@ -944,7 +960,7 @@ class Patrol():
 
         return all_patrol_events
 
-    def calculate_success(self, antagonize=False):
+    def calculate_success(self, antagonize=False, choice=0):
         if self.patrol_event is None:
             return
 
@@ -960,7 +976,12 @@ class Patrol():
         # chance by adding the patrol event's chance of success plus the patrol's total exp
         success_adjust = (1 + 0.10 * len(self.patrol_cats)) * self.patrol_total_experience / (
                 len(self.patrol_cats) * gm_modifier * 2)
-        success_chance = self.patrol_event.chance_of_success + int(success_adjust)
+        if self.patrol_event.choices is None:
+            success_chance = self.patrol_event.chance_of_success + int(success_adjust)
+        else:
+            success_chance = self.patrol_event.chances_of_success[choice] + int(success_adjust)
+            print("chance success: "+str(self.patrol_event.chances_of_success[choice]))
+            
 
         # Auto-wins based on EXP are sorta lame. Often makes it impossible for large patrols with experienced cats to fail patrols at all. 
         # EXP alone can only bring success chance up to 85. However, skills/traits can bring it up above that. 
@@ -1648,6 +1669,9 @@ class Patrol():
         self.MEDCAT_GEN = None
         with open(f"{resource_dir}general/medcat.json", 'r', encoding='ascii') as read_file:
             self.MEDCAT_GEN = ujson.loads(read_file.read())
+        self.SPECIAL = None
+        with open(f"{resource_dir}general/special.json", 'r', encoding='ascii') as read_file:
+            self.SPECIAL = ujson.loads(read_file.read())
 
     # ---------------------------------------------------------------------------- #
     #                                   Handlers                                   #
@@ -2361,6 +2385,8 @@ class PatrolEvent:
                  intro_text="",
                  decline_text="",
                  chance_of_success=0,
+                 chances_of_success=[],
+                 choices=[],
                  exp=0,
                  success_text=None,
                  fail_text=None,
@@ -2385,6 +2411,8 @@ class PatrolEvent:
         self.decline_text = decline_text
         self.history_text = history_text if history_text else []
         self.chance_of_success = chance_of_success  # out of 100
+        self.chances_of_success = chances_of_success
+        self.choices = choices
         self.exp = exp
         self.win_skills = win_skills if win_skills else []
         self.win_trait = win_trait if win_trait else []
