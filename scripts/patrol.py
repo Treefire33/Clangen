@@ -124,6 +124,9 @@ class Patrol():
         if path == "option3":
             self.calculate_success(antagonize=(path == "antag"), choice=2)
             return self.outcome_text
+        if path == "option4":
+                self.calculate_success(antagonize=(path == "antag"), choice=3)
+                return self.outcome_text
 
         self.patrol_done = True
         self.calculate_success(antagonize=(path == "antag"))

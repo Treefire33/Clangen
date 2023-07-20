@@ -221,6 +221,8 @@ class PatrolScreen(Screens):
             self.open_patrol_complete_screen("antagonize")
         elif "option3" in self.elements and event.ui_element == self.elements["option3"]:
             self.open_patrol_complete_screen("option3")
+        elif "option4" in self.elements and event.ui_element == self.elements["option4"]:
+            self.open_patrol_complete_screen("option4")
 
     def handle_patrol_complete_events(self, event):
         if event.ui_element == self.elements['patrol_again']:
@@ -577,13 +579,18 @@ class PatrolScreen(Screens):
             self.elements["not_proceed"] = pygame_gui.elements.UIButton(scale(pygame.Rect((1100, 922), (344, 60))), self.patrol_obj.patrol_event.choices[1],
                                                      object_id="",
                                                      starting_height=2, manager=MANAGER)
-            if len(self.patrol_obj.patrol_event.choices) == 3:
+            if len(self.patrol_obj.patrol_event.choices) > 2 and len(self.patrol_obj.patrol_event.choices) <= 4:
                 self.lowest_ypos = 978
                 self.elements["option3"] = pygame_gui.elements.UIButton(scale(pygame.Rect((1100, 978), (344, 60))), self.patrol_obj.patrol_event.choices[2],
                                                      object_id="",
                                                      starting_height=2, manager=MANAGER)
-            elif len(self.patrol_obj.patrol_event.choices) > 3:
-                print("More than 3 options is currently supported!")
+                if len(self.patrol_obj.patrol_event.choices) == 4:
+                    self.lowest_ypos = 1034
+                    self.elements["option4"] = pygame_gui.elements.UIButton(scale(pygame.Rect((1100, 1034), (344, 60))), self.patrol_obj.patrol_event.choices[2],
+                                                        object_id="",
+                                                        starting_height=2, manager=MANAGER)
+            elif len(self.patrol_obj.patrol_event.choices) > 4:
+                print("More than 4 options is currently not supported!")
 
         self.elements["antagonize"] = UIImageButton(scale(pygame.Rect((1100, 980), (344, 72))), "",
                                                     object_id="#antagonize_button", manager=MANAGER)
@@ -612,6 +619,8 @@ class PatrolScreen(Screens):
             display_text = self.patrol_obj.proceed_patrol("proceed")
         elif user_input in ["option3"]:
             display_text = self.patrol_obj.proceed_patrol("option3")
+        elif user_input in ["option4"]:
+            display_text = self.patrol_obj.proceed_patrol("option4")
         
         # Adjust text for solo patrols
         display_text = adjust_patrol_text(display_text, self.patrol_obj)
