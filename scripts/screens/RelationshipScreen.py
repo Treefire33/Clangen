@@ -131,6 +131,7 @@ class RelationshipScreen(Screens):
                 game.clan.clan_settings['show dead relation'] = not game.clan.clan_settings['show dead relation']
                 self.update_checkboxes()
                 self.apply_cat_filter()
+                self.update_cat_page()
             elif event.ui_element == self.checkboxes["show_empty"]:
                 game.clan.clan_settings['show empty relation'] = not game.clan.clan_settings['show empty relation']
                 self.update_checkboxes()
