@@ -44,7 +44,6 @@ class EvalCommand(Command):
             add_output_line_to_log("Eval failed: " + str(e))
         print = builtins.print
 
-
 class UnderstandRisksCommand(Command):
     name = "understandrisks"
     description = "Accept the risks of using the eval command"
