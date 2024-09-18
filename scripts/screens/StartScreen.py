@@ -131,6 +131,8 @@ class StartScreen(Screens):
                 event.key == pygame.K_RETURN or event.key == pygame.K_SPACE
             ) and self.continue_button.is_enabled:
                 self.change_screen("camp screen")
+            if (event.key == pygame.K_p):
+                self.change_screen("pvz screen")
 
     def on_use(self):
         """

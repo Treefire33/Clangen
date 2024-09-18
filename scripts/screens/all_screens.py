@@ -24,6 +24,7 @@ from .SpriteInspectScreen import SpriteInspectScreen
 from .StartScreen import StartScreen
 from .SwitchClanScreen import SwitchClanScreen
 from .WarriorDenScreen import WarriorDenScreen
+from .PVZScreen import PVZScreen
 
 # ---------------------------------------------------------------------------- #
 #                                  UI RULES                                    #
@@ -89,3 +90,4 @@ view_children_screen = FamilyTreeScreen('see kits screen')
 mediation_screen = MediationScreen("mediation screen")
 change_gender_screen = ChangeGenderScreen("change gender screen")
 
+pvz_screen = PVZScreen("pvz screen")
