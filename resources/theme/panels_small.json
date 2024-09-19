@@ -1,0 +1,14 @@
+{
+    "panel": {
+        "colours": {
+            "dark_bg":"#21282D",
+            "normal_border": "#999999"
+        }
+    },
+    "panel_darker": {
+        "colours": {
+            "dark_bg":"#31383D",
+            "normal_border": "#999999"
+        }
+    }
+}
