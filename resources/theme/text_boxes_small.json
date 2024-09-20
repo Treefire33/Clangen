@@ -354,5 +354,15 @@
         "misc": {
             "text_horiz_alignment": "center"
         }
+    },
+    "#text_box_80_horizcenter": {
+        "prototype": "#text_box",
+        "font": {
+            "name": "notosans",
+            "size": 40
+        },
+        "misc": {
+            "text_horiz_alignment": "center"
+        }
     }
 }

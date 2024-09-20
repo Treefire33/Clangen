@@ -366,5 +366,15 @@
             "text_horiz_alignment": "center",
             "line_spacing": "1.20"
         }
+    },
+    "#text_box_80_horizcenter": {
+        "prototype": "#text_box",
+        "font": {
+            "name": "notosans",
+            "size": 80
+        },
+        "misc": {
+            "text_horiz_alignment": "center"
+        }
     }
 }

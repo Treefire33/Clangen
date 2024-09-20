@@ -1,0 +1,40 @@
+{
+    "panel":
+    {
+        "colours": {
+            "dark_bg":"#21282D",
+            "normal_border": "#999999"
+        },
+        "background_image": {
+            "package": "data.images",
+            "resource": "splat.png",
+            "sub_surface_rect": "0,0,32,32"
+        },
+        "misc":{
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "10",
+            "border_width": "1",
+            "shadow_width": "15"
+        }
+    },
+    "#tileA": {
+        "colours": {
+            "dark_bg":"#655934",
+            "normal_border": "#2F2918"
+        },
+        "misc": {
+            "border_width": "2.5",
+            "shadow_width": "15"
+        }
+    },
+    "#tileB": {
+        "colours": {
+            "dark_bg":"#1E1809",
+            "normal_border": "#0E0B04"
+        },
+        "misc": {
+            "border_width": "2.5",
+            "shadow_width": "15"
+        }
+    }
+}
