@@ -415,7 +415,7 @@ class Sun(Entity):
 class Plant(Entity):
     damage = 10
     size = scaleTuple((340, 340))
-    attack_cooldown = 1300
+    attack_cooldown = 1250
     health = 100
     cost = 50
 
@@ -577,7 +577,7 @@ class Plant(Entity):
 class Zombie(Entity):
     health = 100
     damage = 10
-    attack_cooldown = 750
+    attack_cooldown = 450
     size = scaleTuple((250, 250))
     lane = 0
     currentGame: PVZScreen
