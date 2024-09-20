@@ -585,10 +585,17 @@ class Zombie(Entity):
     eating = False
     eating_plant = None
 
+    # all zombies will at some point have different health, for now, just sprites.
+    zombie_sprites = [
+        "fst_hunt_vole",
+        "mtn_hunt_shrew",
+        "pln_hunt_prairiedog1"
+    ]
+
     def __init__(self, grid_pos, current_lane, current_game):
         self.sprite = pygame_gui.elements.UIImage(
             pygame.Rect(PVZScreen.GridToPosition(grid_pos[0], grid_pos[1], True), self.size),
-            pygame.transform.scale(image_cache.load_image('resources/images/patrol_art/fst_hunt_vole.png'),self.size),
+            pygame.transform.scale(image_cache.load_image(f'resources/images/patrol_art/{choice(self.zombie_sprites)}.png'),self.size),
             manager=MANAGER,
             starting_height=3,
         )
