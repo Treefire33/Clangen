@@ -135,7 +135,7 @@ class PVZScreen(Screens):
             "sunflower": "leader",
             "peashooter": "warrior",
             "wall-nut": "elder",
-            "cherry bomb": "newborn"
+            "cherry bomb": "all"
         }
         translation_dict_button = {
             "sunflower": "#mediation_button",
@@ -431,13 +431,13 @@ class Plant(Entity):
         "leader": "sunflower",
         "warrior": "peashooter",
         "elder": "wall-nut",
-        "newborn": "cherry bomb"
+        "all": "cherry bomb"
     }
     cost_dict = {
         "leader": 50,
         "warrior": 100,
         "elder": 50,
-        "newborn": 150
+        "all": 150
     }
     currentGame: PVZScreen = None
 
@@ -445,7 +445,23 @@ class Plant(Entity):
     plant_spr = None
 
     def getCatSpriteFromClanOfStatus(self, status):
-        cats = get_alive_status_cats(Cat, [status])
+        if status == "all":
+            cats = get_alive_status_cats(Cat, [
+                "leader",
+                "deputy",
+                "medicine cat",
+                "medicine cat apprentice",
+                "warrior",
+                "apprentice",
+                "queen",
+                "elder",
+                "kitten",
+                "mediator",
+                "mediator apprentice",
+                "newborn",
+            ])
+        else:
+            cats = get_alive_status_cats(Cat, [status])
         if len(cats) <= 0:
             cats = get_alive_status_cats(Cat, "warrior")
         selected_cat: Cat = choice(cats)
