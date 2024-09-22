@@ -166,11 +166,11 @@ class PVZScreen(Screens):
         del temp_index
         del translation_dict
         del translation_dict_button
-        # prefabs
-        # self.sun_prefab = pygame_gui.elements.UIImage(
-        #     scale(pygame.Rect((0, 0), (130, 130))),
-        #     pygame.transform.scale(image_cache.load_image('resources/images/buttons/button_mouse.png'),(130, 130))
-        # )
+
+        self.current_wave_start = pygame.time.get_ticks()
+        self.natural_sun_cooldown = randrange(3200, 13500)
+        self.current_natural_sun = pygame.time.get_ticks()
+
         return
     
     def make_sun(self, position: tuple[int, int], dest_lane, value):

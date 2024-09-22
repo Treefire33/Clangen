@@ -25,26 +25,51 @@ from random import random, randrange, choice, sample
 import math
 
 class MinigameSelectScreen(Screens):
+    minigames = [
+        "pvz"
+    ]
+    loaded_minigames = [] #holds minigame screens.
+
+    def __init__(self, name=None):
+        super().__init__(name)
+        for minigame in os.listdir("resources/minigames"):
+            with open(f"resources/minigames/{minigame}/minigame.py") as file:
+                self.minigames.append(minigame)
+                exec(file.read()+f"\n\nMinigameSelectScreen.loaded_minigames.append({minigame}(\"{minigame} screen\"))", globals())
+
     def screen_switches(self):
         self.show_mute_buttons()
         self.set_disabled_menu_buttons(["minigames"])
         self.update_heading_text("Minigames!")
         self.show_menu_buttons()
 
-        self.pvz_minigame = UIImageButton(
-            scale(pygame.Rect((64, 250), (128, 128))),
-            "pvz",
-            object_id="#pvz_minigame"
-        )
+        self.minigame_buttons = {}
+        x = 64
+        y = 250
+        # move scaled 128 until x >= 1400, then increment y by 128
+        for minigame in self.minigames:
+            self.minigame_buttons[minigame] = pygame_gui.elements.UIButton(
+                scale(pygame.Rect((x, y), (128, 128))),
+                minigame,
+                object_id=f"#{minigame.lower().replace('screen', '').replace(' ', '')}_minigame",
+                manager=MANAGER
+            )
+            x += 128
+            if x >= 1400:
+                x = 64
+                y += 128
     
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
             element = event.ui_element
-            if element == self.pvz_minigame:
-                self.change_screen("pvz screen")
+            if element in self.minigame_buttons.values():
+                for minigame, btn in self.minigame_buttons.items():
+                    if element == btn:
+                        self.change_screen(minigame+" screen")
             else:
                 self.menu_button_pressed(event)
     
     def exit_screen(self):
-        self.pvz_minigame.kill()
-        del self.pvz_minigame
+        for minigame, btn in self.minigame_buttons.items():
+            btn.kill()
+        del self.minigame_buttons
