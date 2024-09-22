@@ -25,7 +25,7 @@ from scripts.housekeeping.version import get_version_info
 from random import random, randrange, choice, sample
 import math
 
-class Test(Screens):
+class Example(Screens):
     def screen_switches(self):
         self.hide_menu_buttons()
         self.back_button = UIImageButton(
