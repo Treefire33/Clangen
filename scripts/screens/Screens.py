@@ -177,6 +177,14 @@ class Screens:
             manager=MANAGER,
             object_id="#mute_button",
         ),
+        "minigames": UIImageButton(
+            scale(pygame.Rect((50, 180), (306, 60))),
+            "",
+            visible=False,
+            manager=MANAGER,
+            object_id="#minigames_button",
+            starting_height=6,
+        )
     }
     mute_button = UIImageButton(
         scale(pygame.Rect((1482, 1282), (68, 68))),
@@ -352,7 +360,7 @@ class Screens:
                 "lead_den",
                 "clearing",
                 "warrior_den",
-                "dens_bar",
+                "dens_bar"
             ]:
                 continue
             else:
@@ -421,6 +429,8 @@ class Screens:
             self.change_screen("med den screen")
         elif event.ui_element == self.menu_buttons["warrior_den"]:
             self.change_screen("warrior den screen")
+        elif event.ui_element == self.menu_buttons["minigames"]:
+            self.change_screen("minigame select screen")
 
     def mute_button_pressed(self, event):
         """This is a short-up to deal with mute button presses.

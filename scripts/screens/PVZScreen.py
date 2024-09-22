@@ -69,6 +69,7 @@ class PVZScreen(Screens):
     ]
 
     def screen_switches(self):
+        self.hide_menu_buttons()
         self.play_game = True
         self.seed_packets_bar = pygame_gui.elements.UIImage(
             scale(pygame.Rect((260, 0), (1082, 260))),
@@ -112,6 +113,13 @@ class PVZScreen(Screens):
             object_id="#exit_window_button",
             manager=MANAGER,
         )
+        self.back_button = UIImageButton(
+            scale(pygame.Rect((0, 1340), (210, 60))),
+            "",
+            object_id="#back_button",
+            manager=MANAGER,
+            starting_height=600
+        )
         del errorimg
         self.game_over_box.hide()
         self.game_over_label.hide()
@@ -122,7 +130,7 @@ class PVZScreen(Screens):
             for j in range(9):
                 temp_arr.append(
                     pygame_gui.elements.UIPanel(
-                        scale(pygame.Rect(PVZScreen.GridToPosition(i, j, False), self.tile_size)),
+                        pygame.Rect(PVZScreen.GridToPosition(i, j, True), scaleTuple(self.tile_size)),
                         manager=MANAGER,
                         object_id="#tileB" if j%2==0 else "#tileA"
                     )
@@ -219,8 +227,8 @@ class PVZScreen(Screens):
     debug_enabled = False
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == self.closebtn:
-                self.change_screen("camp screen")
+            if event.ui_element == self.closebtn or event.ui_element == self.back_button:
+                self.change_screen("minigame select screen")
         if self.play_game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
@@ -288,12 +296,17 @@ class PVZScreen(Screens):
         del self.game_over_label
         self.closebtn.kill()
         del self.closebtn
+        self.back_button.kill()
+        del self.back_button
 
         #reset game
         self.current_sun = 100
         self.holding_plant = False
         self.current_plant = None
         self.waveManager.current_wave = 0
+        for i in range(5):
+            for j in range(9):
+                self.lawn[i][j] = False
 
     clock = pygame.Clock()
     wave_cooldowns = [

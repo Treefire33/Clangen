@@ -24,6 +24,7 @@ from .SpriteInspectScreen import SpriteInspectScreen
 from .StartScreen import StartScreen
 from .SwitchClanScreen import SwitchClanScreen
 from .WarriorDenScreen import WarriorDenScreen
+from .MinigameSelectScreen import MinigameSelectScreen
 from .PVZScreen import PVZScreen
 
 # ---------------------------------------------------------------------------- #
@@ -90,4 +91,5 @@ view_children_screen = FamilyTreeScreen('see kits screen')
 mediation_screen = MediationScreen("mediation screen")
 change_gender_screen = ChangeGenderScreen("change gender screen")
 
+minigame_select_screen = MinigameSelectScreen("minigame select screen")
 pvz_screen = PVZScreen("pvz screen")
