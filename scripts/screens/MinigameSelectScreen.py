@@ -44,20 +44,26 @@ class MinigameSelectScreen(Screens):
         self.show_menu_buttons()
 
         self.minigame_buttons = {}
-        x = 64
-        y = 250
+        x = 0
+        y = 0
+        self.minigame_container = pygame_gui.elements.UIScrollingContainer(
+            scale(pygame.Rect((64, 250), (1536, 850))),
+            allow_scroll_x=False,
+            manager=MANAGER,
+        )
         # move scaled 128 until x >= 1400, then increment y by 128
         for minigame in self.minigames:
-            self.minigame_buttons[minigame] = pygame_gui.elements.UIButton(
-                scale(pygame.Rect((x, y), (128, 128))),
+            self.minigame_buttons[minigame] = UIImageButton(
+                scale(pygame.Rect((x, y), (256, 256))),
                 minigame,
+                container=self.minigame_container,
                 object_id=f"#{minigame.lower().replace('screen', '').replace(' ', '')}_minigame",
                 manager=MANAGER
             )
-            x += 128
+            x += 256
             if x >= 1400:
-                x = 64
-                y += 128
+                x = 0
+                y += 256
     
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
@@ -73,3 +79,5 @@ class MinigameSelectScreen(Screens):
         for minigame, btn in self.minigame_buttons.items():
             btn.kill()
         del self.minigame_buttons
+        self.minigame_container.kill()
+        del self.minigame_container

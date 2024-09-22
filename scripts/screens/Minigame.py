@@ -25,9 +25,18 @@ from scripts.housekeeping.version import get_version_info
 from random import random, randrange, choice, sample
 import math
 
-class Example(Screens):
+class Entity():
+    sprite = None
+
+    def update(self, deltaTime):
+        pass
+
+class Minigame(Screens):
+    entities : list[Entity] = []
+    play_game = False
+    deltaTime = 0
+
     def screen_switches(self):
-        self.hide_menu_buttons()
         self.back_button = UIImageButton(
             scale(pygame.Rect((0, 1340), (210, 60))),
             "",
@@ -35,19 +44,10 @@ class Example(Screens):
             manager=MANAGER,
             starting_height=600
         )
-        self.random_text = pygame_gui.elements.UITextBox(
-            "loaded_minigame",
-            scale(pygame.Rect((0, 0), (1600, 300))),
-            object_id="#text_box_80_horizcenter_dark"
-        )
-    
-    def handle_event(self, event):
-        if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == self.back_button:
-                self.change_screen("minigame select screen")
-    
-    def exit_screen(self):
-        self.back_button.kill()
-        del self.back_button
-        self.random_text.kill()
-        del self.random_text
+
+    clock = pygame.Clock()
+    def on_use(self):
+        self.deltaTime = self.clock.tick(60.0)/1000.0
+        for entity in self.entities:
+            entity.update(self.deltaTime)
+        super().on_use()
