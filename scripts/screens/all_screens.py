@@ -26,6 +26,7 @@ from .SwitchClanScreen import SwitchClanScreen
 from .WarriorDenScreen import WarriorDenScreen
 from .MinigameSelectScreen import MinigameSelectScreen
 from .PVZScreen import PVZScreen
+from scripts.minigames.Minigame import Minigame
 
 # ---------------------------------------------------------------------------- #
 #                                  UI RULES                                    #
@@ -48,6 +49,7 @@ BUTTONS:
 
 # SCREENS
 screens = Screens()
+base_minigame = Minigame()
 
 # ---------------------------------------------------------------------------- #
 #                                 cat_screens.py                               #
