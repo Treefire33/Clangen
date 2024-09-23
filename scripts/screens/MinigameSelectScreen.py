@@ -35,7 +35,10 @@ class MinigameSelectScreen(Screens):
         for minigame in os.listdir("resources/minigames"):
             with open(f"resources/minigames/{minigame}/minigame.py") as file:
                 self.minigames.append(minigame)
-                exec(file.read()+f"\n\nMinigameSelectScreen.loaded_minigames.append({minigame}(\"{minigame} screen\"))", globals())
+                try:
+                    exec(file.read()+f"\n\nMinigameSelectScreen.loaded_minigames.append({minigame}(\"{minigame} screen\"))", globals())
+                except:
+                    print(f"failed to load minigame: {minigame}")
 
     def screen_switches(self):
         self.show_mute_buttons()
