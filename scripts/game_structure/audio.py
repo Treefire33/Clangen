@@ -1,13 +1,12 @@
+import logging
 import random
 
 import pygame
-import logging
-
 import pygame_gui
 import ujson
 
-from scripts.game_structure.ui_elements import UIImageButton, CatButton, UISpriteButton
 from scripts.game_structure.game_essentials import game
+from scripts.game_structure.ui_elements import CatButton, UISpriteButton
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,6 @@ creation_screens = ["make clan screen"]
 
 
 class MusicManager:
-
     def __init__(self):
         self.playlists = {}
         self.current_playlist = []
@@ -160,7 +158,6 @@ class MusicManager:
         pauses current music track
         """
         self.muted = True
-        game.switch_setting("audio_mute")
         pygame.mixer.music.pause()
 
     def unmute_music(self, screen):
@@ -169,7 +166,6 @@ class MusicManager:
         if necessary
         """
         self.muted = False
-        game.switch_setting("audio_mute")
         pygame.mixer.music.unpause()
         self.check_music(screen)
 
@@ -213,7 +209,6 @@ music_manager = MusicManager()
 
 
 class _SoundManager:
-
     def __init__(self):
         self.sounds = {}
         self.volume = game.settings["sound_volume"] / 100
@@ -227,7 +222,6 @@ class _SoundManager:
             logger.exception("Failed to load sound index")
             return
         for sound in sound_data:
-
             try:
                 self.sounds[sound] = []
                 for path in sound_data[sound]:
@@ -247,6 +241,16 @@ class _SoundManager:
         UIImageButtons have a sound_id parameter for assigning unique sounds to individual buttons
         :param event: the event that is taking place
         """
+        # This think make sounds play using UI_BUTTON_PRESSED, instead of UI_BUTTON_START_PRESS
+        try:
+            if event.ui_element.sound_id in ["timeskip"]:
+                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                    self.play("button_press", event.ui_element)
+                else:
+                    return
+        except:
+            pass
+
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
             self.pressed = event.ui_element
             self.play("button_press", event.ui_element)
@@ -262,10 +266,10 @@ class _SoundManager:
         if music_manager.muted:
             return
 
-        if button and button.__class__ == UIImageButton:
+        if button and hasattr(button, "sound_id"):
             try:
-                if button.return_sound_id():
-                    sound = button.return_sound_id()
+                if button.sound_id is not None:
+                    sound = button.sound_id
             except AttributeError:
                 logger.exception(f"That ui_element has no sound_id.")
 
