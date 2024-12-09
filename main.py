@@ -168,6 +168,7 @@ from scripts.utility import (
 )  # pylint: disable=redefined-builtin
 # from scripts.debug_menu import debugmode
 from scripts.debug_console import debug_mode
+from scripts.screens.MinigameWindow import minigame_window
 import pygame
 
 
@@ -341,7 +342,8 @@ while 1:
                 MANAGER.print_layer_debug()
             elif event.key == pygame.K_F3:
                 debug_mode.toggle_debug_mode()
-                #debugmode.toggle_console()
+            elif event.key == pygame.K_m:
+                minigame_window.toggle_window()
             elif event.key == pygame.K_F11:
                 scripts.game_structure.screen_settings.toggle_fullscreen(
                     source_screen=getattr(

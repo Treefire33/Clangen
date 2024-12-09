@@ -1,31 +1,46 @@
 # pylint: disable=line-too-long
 # pylint: disable=unused-import
 import pygame
-import pygame_gui.elements.ui_text_box
+import pygame_gui
 
-from scripts.game_structure.game_essentials import game, screen_x, screen_y, MANAGER
-from scripts.game_structure.ui_elements import UIImageButton, UIImageHorizontalSlider
-from scripts.utility import get_text_box_theme, scale, quit, get_alive_status_cats  # pylint: disable=redefined-builtin
+from scripts.game_structure.screen_settings import MANAGER
+from scripts.game_structure.game_essentials import game
+from scripts.game_structure.ui_elements import UISurfaceImageButton
+from scripts.ui.generate_button import get_button_dict, ButtonStyles
+from scripts.ui.get_arrow import get_arrow
+from scripts.utility import get_text_box_theme, ui_scale, quit, get_alive_status_cats  # pylint: disable=redefined-builtin
 from scripts.screens.Screens import Screens
 from .Entity import Entity
+from pygame_gui.core.interfaces import IUIElementInterface
 
-class Minigame(Screens):
+class Minigame():
+    minigame_container = None
+
     entities: list[Entity] = []
+    elements: dict[str, IUIElementInterface] = {}
     play_game = False
-    deltaTime = 0
 
-    def screen_switches(self):
-        self.back_button = UIImageButton(
-            scale(pygame.Rect((0, 1340), (210, 60))),
-            "",
-            object_id="#back_button",
-            manager=MANAGER,
-            starting_height=600
-        )
+    def load_minigame(self):
+        pass
 
-    clock = pygame.Clock()
-    def on_use(self):
-        self.deltaTime = self.clock.tick(60.0)/1000.0
+    def exit_minigame(self):
+        for name, element in self.elements.items():
+            element.kill()
+
+        for enitity in self.entities:
+            enitity.sprite.kill()
+        
+        self.elements.clear()
+
+    def handle_event(self, event: pygame.Event):
+        pass
+
+    def update(self, delta_time):
         for entity in self.entities:
-            entity.update(self.deltaTime)
-        super().on_use()
+            entity.update(delta_time)
+
+def minigame_scale(rect):
+    n_rect = ui_scale(rect)
+    return pygame.Rect(n_rect.x-200, n_rect.y-200, n_rect.width, n_rect.height)
+
+base_minigame = Minigame()

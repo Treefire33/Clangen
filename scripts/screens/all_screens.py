@@ -24,8 +24,6 @@ from .SpriteInspectScreen import SpriteInspectScreen
 from .StartScreen import StartScreen
 from .SwitchClanScreen import SwitchClanScreen
 from .WarriorDenScreen import WarriorDenScreen
-from .MinigameSelectScreen import MinigameSelectScreen
-from .PVZScreen import PVZScreen
 from scripts.minigames.Minigame import Minigame
 
 # ---------------------------------------------------------------------------- #
@@ -122,6 +120,3 @@ class AllScreens:
         cls.family_tree_screen = FamilyTreeScreen("family tree screen")
         cls.mediation_screen = MediationScreen("mediation screen")
         cls.change_gender_screen = ChangeGenderScreen("change gender screen")
-
-        cls.minigame_select_screen = MinigameSelectScreen("minigame select screen")
-        cls.pvz_screen = PVZScreen("pvz screen")
