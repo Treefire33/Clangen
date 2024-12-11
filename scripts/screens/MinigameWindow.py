@@ -28,10 +28,9 @@ import math
 from scripts.minigames.Minigame import Minigame
 from pygame_gui.core.interfaces import IUIElementInterface
 
-class MinigameSelectWindow(UIWindow):
+class MinigameWindow(UIWindow):
     loaded_minigames : dict[str, Minigame] = {} #holds minigame screens.\
-    current_minigame = ""
-    minigame_open = False
+    current_minigame : Minigame = None
 
     def __init__(self, rect, manager):
         super().__init__(
@@ -42,13 +41,14 @@ class MinigameSelectWindow(UIWindow):
         )
 
         self.hide()
+        self.set_blocking(True)
 
         for minigame in os.listdir("resources/minigames"):
-            if minigame == '.Catch':
+            if minigame.startswith("."):
                 continue
             with open(f"resources/minigames/{minigame}/minigame.py") as file:
                 try:
-                    exec(file.read()+f"\n\nMinigameSelectWindow.loaded_minigames[\"{minigame}\"] = {minigame}()", globals())
+                    exec(file.read()+f"\n\nMinigameWindow.loaded_minigames[\"{minigame}\"] = {minigame}()", globals())
                 except Exception as e:
                     print(f"failed to load minigame: {minigame}. {repr(e)}")
 
@@ -75,50 +75,44 @@ class MinigameSelectWindow(UIWindow):
                 x = 0
                 y += 64
 
-        # A container that the minigames load into.
-        self.minigame_container = pygame_gui.core.UIContainer(
-            ui_scale(pygame.Rect(0, 0, 800, 700)),
-            manager,
-            container=self
-        )
-
-        Minigame.minigame_container = self.minigame_container
-
+        back_button_rect = pygame.Rect(0, 0, 152, 30)
+        back_button_rect.bottomleft = (10, -10)
         self.back_button = UISurfaceImageButton(
-            ui_scale(pygame.Rect((25, 470), (152, 30))),
-            get_arrow(3) + " Main Menu",
+            ui_scale(back_button_rect),
+            get_arrow(3) + " Exit",
             get_button_dict(ButtonStyles.SQUOVAL, (152, 30)),
             manager=MANAGER,
             object_id="@buttonstyles_squoval",
             container=self,
-            starting_height=600
+            starting_height=600,
+            anchors={
+                "left": "left",
+                "bottom": "bottom"
+            }
         )
         self.back_button.hide()
-    
-    def toggle_self(self, minigame_open):
-        if minigame_open:
+
+        Minigame.default_minigame_container = self
+
+    def open_minigame(self, minigame: str):
+        if not self.current_minigame:
+            self.loaded_minigames[minigame].load_minigame()
+            self.current_minigame = self.loaded_minigames[minigame]
+            self.minigame_ui_toggle()
+
+    def exit_minigame(self):
+        if self.current_minigame:
+            self.current_minigame.exit_minigame()
+            self.current_minigame = None
+            self.minigame_ui_toggle()
+
+    def minigame_ui_toggle(self):
+        if self.current_minigame:
             self.back_button.show()
             self.minigame_buttons_container.hide()
         else:
             self.back_button.hide()
             self.minigame_buttons_container.show()
-
-    def open_minigame(self, minigame: str):
-        self.loaded_minigames[minigame].load_minigame()
-        for name, element in self.loaded_minigames[minigame].elements.items():
-            if element.ui_container is not None and element.ui_container is not element:
-                element.set_container(self.minigame_container)
-        self.minigame_open = True
-        self.current_minigame = minigame
-        self.toggle_self(self.minigame_open)
-
-    def exit_minigame(self):
-        if self.minigame_open:
-            self.loaded_minigames[self.current_minigame].exit_minigame()
-            self.current_minigame = ""
-            self.minigame_open = False
-            self.back_button.hide()
-        self.toggle_self(self.minigame_open)
 
     def process_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
@@ -128,16 +122,12 @@ class MinigameSelectWindow(UIWindow):
                     self.open_minigame(minigame)
             if element == self.back_button:
                 self.exit_minigame()
-        if self.minigame_open:
-            self.loaded_minigames[self.current_minigame].handle_event(event)
+        if self.current_minigame:
+            self.current_minigame.handle_event(event)
 
     def update(self, delta_time):
-        if self.minigame_open:
-            self.loaded_minigames[self.current_minigame].update(delta_time)
-            # force set the container of entities
-            for element in self.loaded_minigames[self.current_minigame].entities:
-                if element.sprite.ui_container is not None and element.sprite.ui_container is not element.sprite:
-                    element.sprite.set_container(self.minigame_container)
+        if self.current_minigame:
+            self.current_minigame.update(delta_time)
         super().update(delta_time)
 
     def toggle_window(self):
@@ -145,10 +135,9 @@ class MinigameSelectWindow(UIWindow):
             self.hide()
         else:
             self.show()
-            self.toggle_self(self.minigame_open)
-        
+            self.minigame_ui_toggle()
 
-minigame_window = MinigameSelectWindow(
+minigame_window = MinigameWindow(
     ui_scale(pygame.Rect(0, 0, 600, 500)),
     MANAGER
 )

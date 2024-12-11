@@ -14,11 +14,21 @@ from .Entity import Entity
 from pygame_gui.core.interfaces import IUIElementInterface
 
 class Minigame():
-    minigame_container = None
+    default_minigame_container = MANAGER.get_root_container()
 
     entities: list[Entity] = []
     elements: dict[str, IUIElementInterface] = {}
     play_game = False
+
+    def create_element(self, name, element):
+        if element.ui_container is not None and element.ui_container is not element:
+            element.set_container(Minigame.default_minigame_container)
+        self.elements[name] = element
+
+    def create_entity(self, entity):
+        if entity.sprite.ui_container is not None and entity.sprite.ui_container is not entity.sprite:
+            entity.sprite.ui_container.set_container(Minigame.default_minigame_container)
+        self.entities.append(entity)
 
     def load_minigame(self):
         pass
@@ -38,9 +48,5 @@ class Minigame():
     def update(self, delta_time):
         for entity in self.entities:
             entity.update(delta_time)
-
-def minigame_scale(rect):
-    n_rect = ui_scale(rect)
-    return pygame.Rect(n_rect.x-200, n_rect.y-200, n_rect.width, n_rect.height)
 
 base_minigame = Minigame()

@@ -10,7 +10,7 @@ from scripts.game_structure.screen_settings import MANAGER, screen_x, screen_y
 from scripts.game_structure.ui_elements import UIImageButton, UIImageHorizontalSlider
 from scripts.cat.cats import Cat
 from scripts.utility import get_text_box_theme, ui_scale, quit, get_alive_status_cats  # pylint: disable=redefined-builtin
-from scripts.minigames.Minigame import Minigame, minigame_scale
+from scripts.minigames.Minigame import Minigame
 from scripts.minigames.Entity import Entity
 from random import random, randrange, choice, sample
 import math
@@ -89,7 +89,7 @@ class Catch(Minigame):
 
 class Prey(Entity):
     speed = 125
-    size = (100, 100)
+    size = (50, 50)
 
     prey_types = {
         "mtn_hunt_shrew": 5,
@@ -137,7 +137,7 @@ class Prey(Entity):
 
 class Player(Entity):
     speed = 150
-    size = (225, 225)
+    size = (125, 125)
 
     def getCatSpriteFromClanOfStatus(self, status):
         if status == "all":
@@ -161,19 +161,3 @@ class Player(Entity):
             cats = get_alive_status_cats(Cat, "warrior")
         selected_cat: Cat = choice(cats)
         return selected_cat.sprite
-
-    def __init__(self, cur_game):
-        current_sprite = self.getCatSpriteFromClanOfStatus("all")
-        self.sprite = pygame_gui.elements.UIImage(
-            minigame_scale(pygame.Rect((400, 550), self.size)),
-            pygame.transform.scale(
-                current_sprite, self.size
-            ),
-            manager=MANAGER
-        )
-        self.current_game = cur_game
-
-    def update(self, deltaTime):
-        mouse = pygame.mouse.get_pos()
-        current_zeroed_position = min(max(mouse[0], 0), 800)
-        self.sprite.set_position((current_zeroed_position-(self.size[0]/4), self.sprite.relative_rect.topleft[1]))
