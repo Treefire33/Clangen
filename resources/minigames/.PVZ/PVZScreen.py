@@ -35,7 +35,7 @@
 #        (tuple[1]/1400*screen_y),
 #     )
 
-# class PVZScreen(Screens):
+# class PVZ(Minigame):
 
 #     #game loop stuff
 #     current_sun: int = 0 # Number of sun user has

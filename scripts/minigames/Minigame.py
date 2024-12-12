@@ -20,17 +20,30 @@ class Minigame():
     elements: dict[str, IUIElementInterface] = {}
     play_game = False
 
+    minigame_path = "" # used for resource loading
+
     def create_element(self, name, element):
+        if name in self.elements:
+            self.elements[name].kill()
+            self.elements[name] = None
         if element.ui_container is not None and element.ui_container is not element:
             element.set_container(Minigame.default_minigame_container)
+            element.set_anchors(element.anchors)
         self.elements[name] = element
 
-    def create_entity(self, entity):
+    def create_entity(self, entity) -> Entity:
         if entity.sprite.ui_container is not None and entity.sprite.ui_container is not entity.sprite:
             entity.sprite.ui_container.set_container(Minigame.default_minigame_container)
         self.entities.append(entity)
+        return self.entities[len(self.entities)-1] # last in list
+    
+    def destroy_entity(self, entity):
+        index = self.entities.index(entity)
+        self.entities[index].kill()
+        self.entities.remove(entity)
 
     def load_minigame(self):
+        self.play_game = True
         pass
 
     def exit_minigame(self):
@@ -38,9 +51,11 @@ class Minigame():
             element.kill()
 
         for enitity in self.entities:
-            enitity.sprite.kill()
+            enitity.kill()
         
         self.elements.clear()
+
+        self.play_game = False
 
     def handle_event(self, event: pygame.Event):
         pass

@@ -47,8 +47,14 @@ class MinigameWindow(UIWindow):
             if minigame.startswith("."):
                 continue
             with open(f"resources/minigames/{minigame}/minigame.py") as file:
+                minigame_path = f"resources/minigames/{minigame}/resources/"
                 try:
-                    exec(file.read()+f"\n\nMinigameWindow.loaded_minigames[\"{minigame}\"] = {minigame}()", globals())
+                    exec(
+                        file.read()
+                        +f"MinigameWindow.loaded_minigames[\"{minigame}\"] = {minigame}() \
+                        \nMinigameWindow.loaded_minigames[\"{minigame}\"].minigame_path = \"{minigame_path}\"", 
+                        globals()
+                    )
                 except Exception as e:
                     print(f"failed to load minigame: {minigame}. {repr(e)}")
 
@@ -138,6 +144,6 @@ class MinigameWindow(UIWindow):
             self.minigame_ui_toggle()
 
 minigame_window = MinigameWindow(
-    ui_scale(pygame.Rect(0, 0, 600, 500)),
+    ui_scale(pygame.Rect(100, 100, 600, 500)),
     MANAGER
 )
